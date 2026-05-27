@@ -1,0 +1,205 @@
+# 北京移动五大赛道测试配置
+# 每个赛道严格对标征集文件要求的指标
+
+# ──────────────────────────────────────────────
+# 赛道1：文本大模型服务
+# ──────────────────────────────────────────────
+text:
+  name: "文本大模型服务"
+  target:
+    generate_speed_p70:  # ≥ 15 token/s
+      min: 15
+      unit: "token/s"
+    context_window:      # ≥ 64K
+      min: 65536
+      unit: "tokens"
+    first_token_latency: # ≤ 2s
+      max: 2.0
+      unit: "seconds"
+    rpm:                  # ≥ 30
+      min: 30
+      unit: "requests/min"
+    tpm:                  # ≥ 100,000
+      min: 100000
+      unit: "tokens/min"
+  test_cases:
+    - name: "短文本生成"
+      input_tokens: 100
+      count: 20
+    - name: "中等文本生成"
+      input_tokens: 2048
+      count: 15
+    - name: "长文本生成"
+      input_tokens: 32768
+      count: 10
+    - name: "超长文本生成"
+      input_tokens: 65536
+      count: 5
+
+# ──────────────────────────────────────────────
+# 赛道2：图像生成大模型服务
+# ──────────────────────────────────────────────
+image:
+  name: "图像生成大模型服务"
+  target:
+    max_resolution:     # 最大 1080P + 任意长宽比
+      width: 1920
+      height: 1080
+      aspect_ratios:
+        - "1:1"
+        - "16:9"
+        - "9:16"
+        - "4:3"
+        - "3:4"
+    formats:             # 兼容 JPG/JPEG/PNG
+      supported: ["jpg", "jpeg", "png"]
+    qpm:                 # ≥ 30 (单账号)
+      min: 30
+      unit: "requests/min"
+    mixed_language_prompt:  # 中英文混合提示词
+      supported: true
+    watermark:           # 合规水印
+      required: true
+  test_cases:
+    - name: "1080P标准图"
+      resolution: "1920x1080"
+      format: "png"
+      count: 10
+    - name: "方形图"
+      resolution: "1024x1024"
+      format: "jpeg"
+      count: 10
+    - name: "竖版图"
+      resolution: "1080x1920"
+      format: "png"
+      count: 10
+
+# ──────────────────────────────────────────────
+# 赛道3：视频生成大模型服务
+# ──────────────────────────────────────────────
+video:
+  name: "视频生成大模型服务"
+  target:
+    resolutions:         # 480P/720P/1080P
+      supported: ["480P", "720P", "1080P"]
+    codec:               # H.264
+      codec: "h264"
+    fps:                  # ≥ 24 FPS
+      min: 24
+      unit: "fps"
+    first_last_frame:     # 首帧/尾帧设置
+      supported: true
+    face_consistency:     # 人脸一致性
+      supported: true
+    parallel_tasks:       # ≥ 10 (单账号并行)
+      min: 10
+      unit: "concurrent"
+    watermark:            # 合规水印
+      required: true
+  test_cases:
+    - name: "720P标准视频"
+      resolution: "720P"
+      codec: "h264"
+      fps: 24
+      count: 5
+    - name: "1080P高清视频"
+      resolution: "1080P"
+      codec: "h264"
+      fps: 24
+      count: 5
+
+# ──────────────────────────────────────────────
+# 赛道4：语音与音频类大模型服务
+# ──────────────────────────────────────────────
+audio:
+  name: "语音与音频类大模型服务"
+  sub_tracks:
+    asr:  # 语音识别
+      name: "语音识别 (ASR)"
+      target:
+        first_packet_latency:  # ≤ 2s
+          max: 2.0
+          unit: "seconds"
+        qpm:                  # ≥ 300
+          min: 300
+          unit: "requests/min"
+    tts:  # 语音合成
+      name: "语音合成 (TTS)"
+      target:
+        first_packet_latency:  # ≤ 2s
+          max: 2.0
+          unit: "seconds"
+        qpm:                  # ≥ 50
+          min: 50
+          unit: "requests/min"
+        max_chars:             # ≥ 5000
+          min: 5000
+      end_to_end_latency:      # ≤ 4s
+        max: 4.0
+        unit: "seconds"
+    translation:  # 翻译
+      name: "翻译"
+      target:
+        accuracy:   # ≥ 90%
+          min: 90
+          unit: "%"
+        end_to_end: # ≤ 4s
+          max: 4.0
+          unit: "seconds"
+  test_cases:
+    - name: "ASR中文识别"
+      type: "asr"
+      audio_length: "10s"
+      count: 100
+    - name: "TTS中文合成"
+      type: "tts"
+      chars: 1000
+      count: 50
+    - name: "TTS长文本合成"
+      type: "tts"
+      chars: 5000
+      count: 10
+
+# ──────────────────────────────────────────────
+# 赛道5：多模态理解大模型服务
+# ──────────────────────────────────────────────
+multimodal:
+  name: "多模态理解大模型服务"
+  sub_tracks:
+    multimodal_chat:
+      name: "多模态对话"
+      target:
+        qpm:  # ≥ 50
+          min: 50
+          unit: "requests/min"
+        first_token_latency:  # ≤ 2s
+          max: 2.0
+          unit: "seconds"
+    image_understanding:
+      name: "图像理解"
+      target:
+        qpm:  # ≥ 500
+          min: 500
+          unit: "requests/min"
+        first_token_latency:  # ≤ 2s
+          max: 2.0
+          unit: "seconds"
+    video_understanding:
+      name: "视频理解"
+      target:
+        qpm:  # ≥ 300
+          min: 300
+          unit: "requests/min"
+        first_token_latency:  # ≤ 2s
+          max: 2.0
+          unit: "seconds"
+  test_cases:
+    - name: "多模态对话"
+      type: "multimodal_chat"
+      rounds: 50
+    - name: "图像理解"
+      type: "image_understanding"
+      count: 200
+    - name: "视频理解"
+      type: "video_understanding"
+      count: 100

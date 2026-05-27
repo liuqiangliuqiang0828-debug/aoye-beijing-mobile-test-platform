@@ -1,0 +1,169 @@
+# 下游模型端点配置（13个候选模型，全部纳入）
+# 格式：OpenAI 兼容 API，按赛道分类
+# 启动前请填入实际端点和 API Key
+
+# ──────────────────────────────────────────────
+# 方向1：文本大模型（3个）
+# ──────────────────────────────────────────────
+text_models:
+  - id: "qwen3.5-35b-a3b"
+    name: "Qwen3.5-35B-A3B"
+    track: "text"
+    base_url: "http://<MODEL_IP>:8000/v1"  # 例如 http://192.168.3.100:8000/v1
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    model_name: "Qwen3.5-35B-A3B"
+    max_tokens: 4096
+    temperature: 0.7
+    context_window: 262144          # 256K
+    enabled: true
+
+  - id: "qwen3-32b"
+    name: "Qwen3-32B"
+    track: "text"
+    base_url: "http://<MODEL_IP>:8001/v1"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    model_name: "Qwen3-32B"
+    max_tokens: 4096
+    temperature: 0.7
+    context_window: 131072          # 128K
+    enabled: true
+
+  - id: "glm-4.7-32b"
+    name: "GLM-4.7-32B"
+    track: "text"
+    base_url: "http://<MODEL_IP>:8002/v1"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    model_name: "GLM-4.7-32B"
+    max_tokens: 4096
+    temperature: 0.7
+    context_window: 131072
+    enabled: true
+
+# ──────────────────────────────────────────────
+# 方向2：图像生成（3个）
+# ──────────────────────────────────────────────
+image_models:
+  - id: "flux-schnell"
+    name: "FLUX.1-schnell"
+    track: "image"
+    base_url: "http://<MODEL_IP>:7860"  # SD WebUI API 格式
+    api_key: ""
+    max_width: 2048
+    max_height: 2048
+    enabled: true
+
+  - id: "sd35-medium"
+    name: "Stability AI SD3.5 Medium"
+    track: "image"
+    base_url: "http://<MODEL_IP>:8003/v1/images/generations"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    max_width: 1920
+    max_height: 1920
+    enabled: true
+
+  - id: "kokoro-82m"
+    name: "Kokoro-82M"
+    track: "image"
+    base_url: "http://<MODEL_IP>:8004/v1/images/generations"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    max_width: 1024
+    max_height: 1024
+    enabled: true
+
+# ──────────────────────────────────────────────
+# 方向3：视频生成（3个）
+# ──────────────────────────────────────────────
+video_models:
+  - id: "open-sora-1.3"
+    name: "Open-Sora 1.3"
+    track: "video"
+    base_url: "http://<MODEL_IP>:8005"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    max_resolution: "720P"
+    enabled: true
+
+  - id: "cogvideox-5b"
+    name: "CogVideoX-5B"
+    track: "video"
+    base_url: "http://<MODEL_IP>:8006"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    max_resolution: "720P"
+    enabled: true
+
+  - id: "wan2.1-14b"
+    name: "Wan2.1-14B"
+    track: "video"
+    base_url: "http://<MODEL_IP>:8007"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    max_resolution: "1080P"
+    enabled: true
+
+# ──────────────────────────────────────────────
+# 方向4：语音与音频（5个）
+# ──────────────────────────────────────────────
+audio_models:
+  - id: "f5-tts"
+    name: "F5-TTS"
+    track: "audio"
+    sub_track: "tts"
+    base_url: "http://<MODEL_IP>:8008"
+    api_key: ""
+    enabled: true
+
+  - id: "cosyvoice-2"
+    name: "CosyVoice 2"
+    track: "audio"
+    sub_track: "tts"
+    base_url: "http://<MODEL_IP>:8009"
+    api_key: ""
+    enabled: true
+
+  - id: "whisper-large-v3"
+    name: "Whisper Large v3"
+    track: "audio"
+    sub_track: "asr"
+    base_url: "http://<MODEL_IP>:8010/v1/audio/transcriptions"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    enabled: true
+
+  - id: "sensevoice"
+    name: "SenseVoice"
+    track: "audio"
+    sub_track: "asr"
+    base_url: "http://<MODEL_IP>:8011"
+    api_key: ""
+    enabled: true
+
+  - id: "moshi"
+    name: "Moshi"
+    track: "audio"
+    sub_track: "dialogue"
+    base_url: "http://<MODEL_IP>:8012"
+    api_key: ""
+    enabled: true
+
+# ──────────────────────────────────────────────
+# 方向5：多模态理解（3个）
+# ──────────────────────────────────────────────
+multimodal_models:
+  - id: "qwen3-vl-32b"
+    name: "Qwen3-VL-32B"
+    track: "multimodal"
+    base_url: "http://<MODEL_IP>:8013/v1"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    enabled: true
+
+  - id: "internvl3-26b"
+    name: "InternVL3-26B"
+    track: "multimodal"
+    base_url: "http://<MODEL_IP>:8014/v1"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    enabled: true
+
+  - id: "llava-next-72b"
+    name: "LLaVA-Next-72B"
+    track: "multimodal"
+    base_url: "http://<MODEL_IP>:8015/v1"
+    api_key: "sk-xxxxxxxxxxxxxxxx"
+    quantized: true  # 需要量化版本
+    enabled: true
