@@ -1,0 +1,8 @@
+name: "视频生成大模型服务"
+track: "video"
+targets:
+  resolutions: ["480P","720P","1080P"]
+  codec: "h264"
+  fps: 24
+  parallel_tasks: 10
+test_cases: []

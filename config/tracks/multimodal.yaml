@@ -1,0 +1,20 @@
+name: "多模态理解服务"
+track: "multimodal"
+sub_tracks:
+  multimodal_chat:
+    name: "多模态对话"
+    targets:
+      qpm: 50
+      first_token_latency: 2.0
+  image_understanding:
+    name: "图像理解"
+    targets:
+      qpm: 500
+      first_token_latency: 2.0
+test_cases:
+  - name: "多模态对话"
+    type: "multimodal_chat"
+    rounds: 50
+  - name: "图像理解"
+    type: "image_understanding"
+    count: 200

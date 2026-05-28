@@ -3,400 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B抹井移动 Token 测试平台 v1.0</title>
-<style>
-  :root { --bg: #f5f7fa; --card: #fff; --primary: #2563eb; --primary-dark: #1d4ed8; --success: #16a34a; --danger: #dc2626; --warn: #f59e0b; --text: #1e293b; --text-light: #64748b; --border: #e2e8f0; --shadow: 0 1px 3px rgba(0,0,0,0.08); --radius: 8px; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  .topbar { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-  .topbar h1 { font-size: 20px; font-weight: 700; }
-  .topbar .meta { font-size: 13px; opacity: 0.85; }
-  .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
-  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--primary); border-left: 3px solid var(--primary); padding-left: 10px; }
-
-  /* 控制面板 */
-  .control-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
-  .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .control-item { margin-bottom: 0; }
-  .control-item label { display: block; font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 4px; }
-  .control-item select, .control-item input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fafbfc; }
-  .control-item select:focus, .control-item input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
-
-  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn { padding: 9px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
-  .btn-danger { background: var(--danger); color: #fff; }
-  .btn-danger:hover:not(:disabled) { background: #b91c1c; }
-  .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border); }
-  .btn-outline:hover:not(:disabled) { background: #f1f5f9; }
-  .btn-success { background: var(--success); color: #fff; }
-
-  /* 赛道状态卡 */
-  .tracks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 20px; }
-  .track-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; border-left: 4px solid var(--border); transition: border-color 0.2s; }
-  .track-card.running { border-left-color: var(--primary); animation: pulse-border 2s infinite; }
-  .track-card.done-ok { border-left-color: var(--success); }
-  .track-card.done-fail { border-left-color: var(--danger); }
-  @keyframes pulse-border { 0%,100%{ border-left-color: var(--primary); } 50%{ border-left-color: #93c5fd; } }
-  .track-card h3 { font-size: 15px; margin-bottom: 8px; }
-  .track-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
-  .track-stat { font-size: 12px; color: var(--text-light); }
-  .track-stat span { font-weight: 700; color: var(--text); font-size: 16px; display: block; }
-
-  /* 模型列表 */
-  .models-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px; }
-  .models-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .models-table th { text-align: left; padding: 8px 12px; background: #f8fafc; color: var(--text-light); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
-  .models-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  .models-table tr:hover { background: #f8fafc; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-  .dot-green { background: var(--success); }
-  .dot-blue { background: var(--primary); }
-  .dot-gray { background: #ccc; }
-  .dot-red { background: var(--danger); }
-
-  /* 实时日志 */
-  .log-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; }
-  .log-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-  .log-body { height: 280px; overflow-y: auto; padding: 10px 16px; font-family: "SF Mono", "Fira Code", "Consolas", monospace; font-size: 12px; line-height: 1.8; background: #0f172a; color: #e2e8f0; }
-  .log-line { margin: 0; whitespace-pre-wrap; word-break: break-all; }
-  .log-info { color: #38bdf8; }
-  .log-ok { color: #4ade80; }
-  .log-err { color: #f87171; }
-  .log-warn { color: #fbbf24; }
-
-  /* 结果展示 */
-  .result-panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; }
-  .result-header { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-  .result-header h3 { font-size: 15px; }
-  .result-body { padding: 16px; overflow-x: auto; }
-  .metric-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .metric-table th { background: #f8fafc; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
-  .metric-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-  .badge-pass { background: #dcfce7; color: #166534; }
-  .badge-fail { background: #fee2e2; color: #991b1b; }
-
-  /* SLA 达标线指示 */
-  .sla-line { font-size: 11px; color: var(--text-light); margin: 4px 0; }
-  .sla-bar { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin: 4px 0 8px; }
-  .sla-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
-  .sla-ok { background: var(--success); }
-  .sla-warn { background: var(--warn); }
-  .sla-fail { background: var(--danger); }
-
-  /* 报告下载 */
-  .report-actions { padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .hidden { display: none; }
-</style>
+<title>Token 测试平台 v2.1 — 北京移动 Token 模型聚合平台</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">🦞 Token Test</div>
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-panel="p-dashboard"><span class="icon">📊</span><span>总览</span></div>
+      <div class="nav-item" data-panel="p-results"><span class="icon">📋</span><span>结果</span></div>
+      <div class="nav-item" data-panel="p-settings"><span class="icon">⚙️</span><span>设置</span></div>
+      <div class="nav-item" data-panel="p-reports"><span class="icon">📄</span><span>报告</span></div>
+    </div>
+    <div class="sidebar-footer">v2.1.0 ｜ Beijing Mobile</div>
+  </nav>
 
-<div class="topbar">
-  <h1>🦞 北移 Token 测试平台 v1.0</h1>
-  <div class="meta">192.168.3.12:8000 | 五大赛道</div>
-</div>
+  <!-- Main -->
+  <div class="main">
 
-<div class="container">
-
-  <!-- 控制面板 -->
-  <div class="control-panel">
-    <div class="section-title">🚀 测试控制</div>
-    <div class="control-grid">
-      <div class="control-item">
-        <label>选择赛道</label>
-        <select id="trackSelect">
-          <option value="all">全部赛道</option>
-        </select>
+    <!-- ===== Dashboard ===== -->
+    <div id="p-dashboard" class="panel active">
+      <div class="section-title">🚀 测试控制</div>
+      <div class="card">
+        <div class="grid3">
+          <div class="field">
+            <label>赛道选择</label>
+            <select id="trackSel"><option value="all">所有赛道</option></select>
+          </div>
+          <div class="field">
+            <label>并发数</label>
+            <input type="number" id="concIn" value="10" min="1" max="100">
+          </div>
+          <div class="field">
+            <label>模型过滤</label>
+            <input id="modelFil" placeholder="输入模型名过滤">
+          </div>
+        </div>
+        <div class="inlineBtns" style="gap:8px">
+          <button class="btn btnPri" id="btnAllTrk" onclick="doRunAll()">▶ 全部赛道</button>
+          <button class="btn btnSuc" id="btnSelTrk" onclick="doRunSel()">▶ 选中赛道</button>
+          <button class="btn btnGry" onclick="doRefresh()">🔄 刷新</button>
+          <button class="btn btnDng" onclick="doCancel()">⏹ 取消</button>
+        </div>
       </div>
-      <div class="control-item">
-        <label>并发限制</label>
-        <input type="number" id="concurrency" value="10" min="1" max="100">
+
+      <div class="section-title">📊 概览统计</div>
+      <div class="grid4">
+        <div class="stat-card"><div class="val" id="statTotalReq">0</div><div class="lbl">总请求</div></div>
+        <div class="stat-card"><div class="val" id="statSuccess">0</div><div class="lbl">成功</div></div>
+        <div class="stat-card"><div class="val" id="statError">0</div><div class="lbl">失败</div></div>
+        <div class="stat-card"><div class="val" id="statSuccessRate">0%</div><div class="lbl">成功率</div></div>
       </div>
-      <div class="control-item">
-        <label>模型过滤 (可选)</label>
-        <input type="text" id="modelFilter" placeholder="留空=全部, 如 qwen3.5">
+
+      <div class="section-title">🏁 赛道状态</div>
+      <div id="tracksGrid"></div>
+
+      <div class="section-title">🤖 模型列表</div>
+      <div class="card" style="overflow-x:auto">
+        <table class="dataTab">
+          <thead><tr><th>#</th><th>名称</th><th>赛道</th><th>Base URL</th><th>状态</th><th>Key</th></tr></thead>
+          <tbody id="monTB"></tbody>
+        </table>
       </div>
+
+      <div class="section-title">📜 实时日志</div>
+      <div class="logBox" id="logBox">等待任务启动...</div>
     </div>
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="runAll()" id="btnRunAll">▶ 全部赛道测试</button>
-      <button class="btn btn-success" onclick="runSelected()" id="btnRunSel">▶ 选中的赛道</button>
-      <button class="btn btn-outline" onclick="loadConfig()">🔄 刷新配置</button>
-      <button class="btn btn-danger" onclick="cancelAll()">■ 取消测试</button>
+
+    <!-- ===== Results ===== -->
+    <div id="p-results" class="panel">
+      <div class="section-title">📋 测试历史</div>
+      <div id="resultsList"><p style="color:#999">暂无测试结果</p></div>
     </div>
-  </div>
 
-  <!-- 赛道状态 -->
-  <div class="section-title">📊 赛道状态</div>
-  <div class="tracks-grid" id="tracksGrid">
-    <div class="track-card" style="border-left-color:#94a3b8"><h3>等待配置加载...</h3></div>
-  </div>
+    <!-- ===== Settings ===== -->
+    <div id="p-settings" class="panel">
+      <div class="section-title">⚙️ 全局设置</div>
+      <div class="card">
+        <div class="field">
+          <label>默认并发数</label>
+          <input type="number" id="setDefaultConc" value="10" min="1" max="100">
+        </div>
+        <div class="inlineBtns">
+          <button class="btn btnPri" onclick="saveSettings()">💾 保存设置</button>
+        </div>
+      </div>
 
-  <!-- 模型列表 -->
-  <div class="models-panel">
-    <div class="section-title">🔧 模型配置</div>
-    <div style="margin-bottom:12px; font-size:13px; color:var(--text-light)">
-      共 <strong id="totalModels">0</strong> 个模型 | 
-      已启用: <span id="enabledModels" style="color:var(--success)">0</span> | 
-      未启用: <span id="disabledModels" style="color:var(--text-light)">0</span>
-      <label style="margin-left:12px"><input type="checkbox" id="showDisabled" onchange="refreshModels()"> 显示未启用</label>
+      <div class="section-title">🔧 模型配置</div>
+      <div id="modelConfigs"></div>
     </div>
-    <table class="models-table">
-      <thead><tr><th>ID</th><th>名称</th><th>赛道</th><th>基地址</th><th>状态</th><th>启用</th></tr></thead>
-      <tbody id="modelsBody"></tbody>
-    </table>
-  </div>
 
-  <!-- 实时监控 -->
-  <div class="section-title">📡 实时日志 & 指标</div>
-  <div class="log-panel">
-    <div class="log-header">
-      <span>运行日志</span>
-      <button class="btn btn-outline" style="padding:4px 10px; font-size:12px" onclick="clearLog()">清空</button>
+    <!-- ===== Reports ===== -->
+    <div id="p-reports" class="panel">
+      <div class="section-title">📄 测试报告</div>
+      <div id="reportList"><p style="color:#999">暂无报告</p></div>
     </div>
-    <div class="log-body" id="logBody"></div>
-  </div>
 
-  <!-- 结果 -->
-  <div id="resultSection" class="hidden">
-    <div class="section-title">📋 测试结果</div>
-  </div>
+  </div><!-- /main -->
+</div><!-- /layout -->
 
-</div>
-
-<script>
-// ── 状态 ──
-let state = { tracks: {}, models: [], running: false, activeRunId: null };
-
-const API = '/api';
-const TRACK_LABELS = {
-  text: '📝 文本大模型服务',
-  image: '🖼️ 图像生成大模型服务',
-  video: '🎬 视频生成大模型服务',
-  audio: '🎵 语音与音频类服务',
-  multimodal: '🔗 多模态理解服务'
-};
-
-// ── 日志 ──
-function log(msg, kind='info') {
-  const d = document.getElementById('logBody');
-  const t = new Date().toLocaleTimeString('zh-CN', {hour12:false});
-  const cls = kind === 'ok' ? 'log-ok' : kind === 'err' ? 'log-err' : kind === 'warn' ? 'log-warn' : 'log-info';
-  const line = document.createElement('div');
-  line.className = 'log-line ' + cls;
-  line.textContent = '[' + t + '] ' + msg;
-  d.appendChild(line);
-  d.scrollTop = d.scrollHeight;
-}
-function clearLog() { document.getElementById('logBody').innerHTML = ''; log('日志已清空'); }
-
-// ── 加载配置 ──
-async function loadConfig() {
-  log('正在加载配置...');
-  try {
-    // 加载赛道
-    const r1 = await fetch(API + '/config/tracks');
-    const t1 = await r1.json();
-    // 加载模型
-    const r2 = await fetch(API + '/config/models');
-    const m2 = await r2.json();
-    
-    state.tracks = t1.tracks || [];
-    state.models = m2.models || [];
-
-    // 填充赛道下拉
-    const sel = document.getElementById('trackSelect');
-    sel.innerHTML = '<option value="all">全部赛道</option>';
-    state.tracks.forEach(t => {
-      sel.innerHTML += '<option value="' + t + '">' + (TRACK_LABELS[t] || t) + '</option>';
-    });
-
-    // 渲染模型表
-    refreshModels();
-    // 渲染赛道卡
-    renderTrackCards();
-    
-    log('✅ 配置加载完成: ' + state.tracks.length + ' 赛道, ' + state.models.length + ' 模型', 'ok');
-  } catch(e) {
-    log('❌ 配置加载失败: ' + e.message, 'err');
-  }
-}
-
-function refreshModels() {
-  const showDisabled = document.getElementById('showDisabled').checked;
-  let mods = state.models;
-  if (!showDisabled) mods = mods.filter(m => m.enabled);
-  
-  const enabled = state.models.filter(m => m.enabled).length;
-  const disabled = state.models.length - enabled;
-  document.getElementById('totalModels').textContent = state.models.length;
-  document.getElementById('enabledModels').textContent = enabled;
-  document.getElementById('disabledModels').textContent = disabled;
-
-  const tbody = document.getElementById('modelsBody');
-  tbody.innerHTML = mods.map(m => {
-    const track = Object.keys(TRACK_LABELS).find(k => m.id.includes(k.split('-')[0].toLowerCase())) || 'text';
-    // 简单映射
-    let tLabel = 'text';
-    const idLower = m.id.toLowerCase();
-    if (idLower.includes('qwen3')) tLabel = 'text';
-    else if (idLower.includes('glm')) tLabel = 'text';
-    else if (idLower.includes('flux')) tLabel = 'image';
-    else if (idLower.includes('sd') || idLower.includes('kokoro')) tLabel = 'image';
-    else if (idLower.includes('sora') || idLower.includes('cog') || idLower.includes('wan')) tLabel = 'video';
-    else if (idLower.includes('f5') || idLower.includes('cosy') || idLower.includes('whisper') || idLower.includes('sense') || idLower.includes('moshi')) tLabel = 'audio';
-    else if (idLower.includes('vl') || idLower.includes('intern') || idLower.includes('llava')) tLabel = 'multimodal';
-    
-    const dot = m.enabled ? 'dot-green' : 'dot-gray';
-    return '<tr>'
-      + '<td><code>' + m.id + '</code></td>'
-      + '<td>' + m.name + '</td>'
-      + '<td>' + (TRACK_LABELS[tLabel] || tLabel) + '</td>'
-      + '<td title="' + (m.base_url||'-') + '">' + (m.base_url||'-').replace('http://','').replace('/v1','') + '</td>'
-      + '<td><span class="status-dot ' + dot + '"></span>' + (m.enabled ? '运行中' : '停止') + '</td>'
-      + '<td><button class="btn btn-outline" style="padding:2px 8px;font-size:11px" onclick="toggleModel(\''+m.id+'\',!'+m.enabled+')">' + (m.enabled ? '禁用' : '启用') + '</button></td>'
-      + '</tr>';
-  }).join('');
-}
-
-// ── 赛道卡片 ──
-function renderTrackCards() {
-  const grid = document.getElementById('tracksGrid');
-  grid.innerHTML = state.tracks.map(t => {
-    return '<div class="track-card" id="track-' + t + '">'
-      + '<h3>' + (TRACK_LABELS[t] || t) + '</h3>'
-      + '<div class="track-stats">'
-      + '<div class="track-stat">状态<span id="status-' + t + '">等待中</span></div>'
-      + '<div class="track-stat">模型数<span id="models-' + t + '">-</span></div>'
-      + '<div class="track-stat">请求数<span id="reqs-' + t + '">0</span></div>'
-      + '<div class="track-stat">成功率<span id="rate-' + t + '">-</span></div>'
-      + '</div></div>';
-  }).join('');
-}
-
-// ── 执行测试 ──
-async function runTrack(track) {
-  const conc = document.getElementById('concurrency').value;
-  state.running = true;
-  document.getElementById('btnRunAll').disabled = true;
-  document.getElementById('btnRunSel').disabled = true;
-  
-  const el = document.getElementById('track-' + track);
-  if (el) el.classList.add('running');
-  log('▶ 启动赛道: ' + track, 'info');
-  document.getElementById('status-' + track).textContent = '测试中...';
-
-  try {
-    const r = await fetch(API + '/test/run-track/' + track + '?concurrent=' + conc, { method: 'POST' });
-    const d = await r.json();
-    
-    document.getElementById('status-' + track).textContent = d.status;
-    if (el) {
-      el.classList.remove('running');
-      el.classList.add(d.status === 'completed' ? 'done-ok' : 'done-fail');
-    }
-  } catch(e) {
-    log('❌ 赛道 ' + track + ' 执行失败: ' + e.message, 'err');
-    if (el) {
-      el.classList.remove('running');
-      el.classList.add('done-fail');
-    }
-  }
-  
-  state.running = false;
-  document.getElementById('btnRunAll').disabled = false;
-  document.getElementById('btnRunSel').disabled = false;
-}
-
-async function runAll() {
-  const fil = document.getElementById('modelFilter').value;
-  const conc = document.getElementById('concurrency').value;
-  state.running = true;
-  document.getElementById('btnRunAll').disabled = true;
-
-  log('▶ 开始全部赛道测试...', 'info');
-  log('并发: ' + conc + ', 模型过滤: ' + (fil || '全部'), 'info');
-
-  try {
-    const r = await fetch(API + '/test/run-all?concurrent=' + conc, { method: 'POST' });
-    const d = await r.json();
-
-    Object.keys(state.tracks).forEach(t => runTrackObject(state.tracks[t]));
-    
-    // 生成报告
-    if(d.report_path) { log('📄 报告已生成: ' + d.report_path, 'ok'); }
-  } catch(e) {
-    log('❌ 全部赛道测试失败: ' + e.message, 'err');
-  }
-
-  state.running = false;
-  document.getElementById('btnRunAll').disabled = false;
-}
-
-function runSelected() {
-  const sel = document.getElementById('trackSelect').value;
-  if (sel === 'all') { runAll(); return; }
-  runTrack(sel);
-}
-
-async function cancelAll() {
-  log('■ 取消所有测试...', 'warn');
-  try {
-    await fetch(API + '/test/cancel-all', { method: 'POST' });
-    log('✅ 已取消', 'ok');
-  } catch(e) { log('❌ 取消失败: ' + e.message, 'err'); }
-}
-
-// ── 指标轮询 ──
-async function pollMetrics() {
-  try {
-    const r = await fetch(API + '/metrics/summary');
-    if(!r.ok) return;
-    const d = await r.json();
-    const tracks = d.tracks || {};
-    for (const [track, models] of Object.entries(tracks)) {
-      for (const [mid, data] of Object.entries(models)) {
-        const reqs = document.getElementById('reqs-' + track);
-        const rate = document.getElementById('rate-' + track);
-        if (reqs) reqs.textContent = data.total_requests || 0;
-        if (rate) {
-          const sr = data.success_rate;
-          if (sr > 95) {
-            rate.innerHTML = '<span style="color:var(--success)">' + sr.toFixed(1) + '%</span>';
-          } else if (sr > 80) {
-            rate.innerHTML = '<span style="color:var(--warn)">' + sr.toFixed(1) + '%</span>';
-          } else {
-            rate.innerHTML = '<span style="color:var(--danger)">' + sr.toFixed(1) + '%</span>';
-          }
-        }
-      }
-    }
-  } catch(e) {}
-}
-
-setInterval(pollMetrics, 3000);
-
-// ── SLA 判定 ──
-function checkSLA(track, metricName, value) {
-  const SLA = {
-    text: { generate_speed_p70: { op:'>=', val:15 }, first_token_latency: {op:'<=', val:2000 }, rpm: { op:'>=', val:30 }, tpm: { op:'>=', val:100000 } },
-    image: { qpm: { op:'>=', val:30 } },
-    audio: { asr_qpm: { op:'>=', val:300 }, tts_qpm: { op:'>=', val:50 } }
-  };
-  const trackSLA = (SLA[track]||{});
-  const sla = trackSLA[metricName];
-  if (!sla) return 'unknown';
-  if (sla.op === '>=' && value >= sla.val) return 'pass';
-  if (sla.op === '<=' && value <= sla.val) return 'pass';
-  return 'fail';
-}
-
-// ── 初始化 ──
-loadConfig();
-</script>
-
+<script src="js/main.js"></script>
 </body>
 </html>

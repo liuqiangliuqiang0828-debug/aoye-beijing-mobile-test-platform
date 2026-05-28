@@ -1,6 +1,6 @@
-# 下游模型端点配置（13个候选模型，全部纳入）
+# 下游模型端点配置（13+候选模型，全部纳入）
 # 格式：OpenAI 兼容 API，按赛道分类
-# 启动前请填入实际端点和 API Key
+# 使用前请填入实际端点和 API Key
 
 # ──────────────────────────────────────────────
 # 方向1：文本大模型（3个）
@@ -9,12 +9,12 @@ text_models:
   - id: "qwen3.5-35b-a3b"
     name: "Qwen3.5-35B-A3B"
     track: "text"
-    base_url: "http://<MODEL_IP>:8000/v1"  # 例如 http://192.168.3.100:8000/v1
+    base_url: "http://<MODEL_IP>:8000/v1"
     api_key: "sk-xxxxxxxxxxxxxxxx"
     model_name: "Qwen3.5-35B-A3B"
     max_tokens: 4096
     temperature: 0.7
-    context_window: 262144          # 256K
+    context_window: 262144
     enabled: true
 
   - id: "qwen3-32b"
@@ -25,7 +25,7 @@ text_models:
     model_name: "Qwen3-32B"
     max_tokens: 4096
     temperature: 0.7
-    context_window: 131072          # 128K
+    context_window: 131072
     enabled: true
 
   - id: "glm-4.7-32b"
@@ -46,7 +46,7 @@ image_models:
   - id: "flux-schnell"
     name: "FLUX.1-schnell"
     track: "image"
-    base_url: "http://<MODEL_IP>:7860"  # SD WebUI API 格式
+    base_url: "http://<MODEL_IP>:7860"
     api_key: ""
     max_width: 2048
     max_height: 2048
@@ -165,5 +165,5 @@ multimodal_models:
     track: "multimodal"
     base_url: "http://<MODEL_IP>:8015/v1"
     api_key: "sk-xxxxxxxxxxxxxxxx"
-    quantized: true  # 需要量化版本
+    quantized: true
     enabled: true

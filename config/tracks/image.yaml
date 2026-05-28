@@ -1,0 +1,27 @@
+name: "图像生成大模型服务"
+track: "image"
+targets:
+  max_resolution:
+    width: 1920
+    height: 1080
+  formats:
+    supported: ["jpg","jpeg","png"]
+  qpm:
+    min: 30
+    unit: "requests/min"
+mixed_language_prompt: true
+watermark:
+  required: true
+test_cases:
+  - name: "1080P标准图"
+    resolution: "1920x1080"
+    format: "png"
+    count: 10
+  - name: "方形图"
+    resolution: "1024x1024"
+    format: "jpeg"
+    count: 10
+  - name: "竖版图"
+    resolution: "1080x1920"
+    format: "png"
+    count: 10

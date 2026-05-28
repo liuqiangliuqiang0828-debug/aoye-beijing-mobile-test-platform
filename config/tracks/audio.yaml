@@ -1,0 +1,28 @@
+name: "语音与音频类服务"
+track: "audio"
+sub_tracks:
+  asr:
+    name: "语音识别"
+    targets:
+      first_packet_latency: 2.0
+      qpm: 300
+  tts:
+    name: "语音合成"
+    targets:
+      first_packet_latency: 2.0
+      qpm: 50
+      max_chars: 5000
+      end_to_end_latency: 4.0
+test_cases:
+  - name: "ASR中文识别"
+    type: "asr"
+    audio_length: "10s"
+    count: 100
+  - name: "TTS中文合成"
+    type: "tts"
+    chars: 1000
+    count: 50
+  - name: "TTS长文本合成"
+    type: "tts"
+    chars: 5000
+    count: 10

@@ -1,0 +1,13 @@
+name: "行业专用大模型服务"
+track: "industry"
+targets:
+  domain_accuracy: 90
+  availability: 99.5
+  context_window: 32768
+test_cases:
+  - name: "行业知识问答"
+    type: "qa"
+    count: 50
+  - name: "数据脱敏测试"
+    type: "compliance"
+    count: 20

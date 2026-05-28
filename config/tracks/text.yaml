@@ -1,0 +1,31 @@
+name: "文本大模型服务"
+track: "text"
+targets:
+  generate_speed_p70:
+    min: 15
+    unit: "token/s"
+  context_window:
+    min: 65536
+    unit: "tokens"
+  first_token_latency:
+    max: 2.0
+    unit: "seconds"
+  rpm:
+    min: 30
+    unit: "requests/min"
+  tpm:
+    min: 100000
+    unit: "tokens/min"
+test_cases:
+  - name: "短文本生成"
+    input_tokens: 100
+    count: 20
+  - name: "中等文本生成"
+    input_tokens: 2048
+    count: 15
+  - name: "长文本生成"
+    input_tokens: 32768
+    count: 10
+  - name: "超长文本生成"
+    input_tokens: 65536
+    count: 5

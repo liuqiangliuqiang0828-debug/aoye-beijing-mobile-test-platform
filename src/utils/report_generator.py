@@ -12,10 +12,17 @@ from typing import Dict, Any, List
 
 class ReportGenerator:
     def __init__(self, output_dir=None):
-        self.output_dir = output_dir or os.path.join(
-            os.path.dirname(__file__), "..", "..", "reports"
-        )
-        os.makedirs(self.output_dir, exist_ok=True)
+        if output_dir:
+            self.output_dir = output_dir
+        else:
+            candidates = [
+                os.path.join(os.path.dirname(__file__), "..", "..", "reports"),
+            ]
+            for c in candidates:
+                if not os.path.exists(os.path.dirname(c)):
+                    os.makedirs(os.path.dirname(c), exist_ok=True)
+                self.output_dir = c
+                break
 
     def generate_html_report(self, track_results, raw_data=None, run_id=None):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
